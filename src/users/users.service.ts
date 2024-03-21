@@ -4,13 +4,17 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) { }
+    private configService: ConfigService
+  ) { 
+    console.log(this.configService.get<string>('database.host'));
+  }
 
   create(createUserDto: CreateUserDto): Promise<User> {
     console.log(createUserDto);
@@ -23,6 +27,8 @@ export class UsersService {
   }
 
   findOne(id: string) {
+    console.log(this.configService.get<string>('database.host'));
+    console.log(this.configService.get<string>('DB_HOST'));
     return this.userRepository.findOne({ where: { id } });
   }
 
