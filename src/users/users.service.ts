@@ -12,7 +12,7 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private configService: ConfigService
-  ) { 
+  ) {
     console.log(this.configService.get<string>('database.host'));
   }
 
@@ -27,9 +27,11 @@ export class UsersService {
   }
 
   findOne(id: string) {
-    console.log(this.configService.get<string>('database.host'));
-    console.log(this.configService.get<string>('DB_HOST'));
     return this.userRepository.findOne({ where: { id } });
+  }
+
+  findByUsername(username: string) {
+    return this.userRepository.findOne({ where: { username } })
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
