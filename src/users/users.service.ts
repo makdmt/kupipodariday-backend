@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { hashValue } from 'src/shared/hash';
 
 @Injectable()
 export class UsersService {
@@ -12,17 +13,13 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private configService: ConfigService
-  ) {
-    console.log(this.configService.get<string>('database.host'));
-  }
+  ) { }
 
-  create(createUserDto: CreateUserDto): Promise<User> {
-    console.log(createUserDto);
-    return this.userRepository.save(createUserDto);
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    return this.userRepository.save({ ...createUserDto, password: await hashValue(createUserDto.password) });
   }
 
   findAll(): Promise<User[]> {
-    console.log('service')
     return this.userRepository.find();
   }
 
