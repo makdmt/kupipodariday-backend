@@ -1,5 +1,5 @@
 import { IsUrl, Length, Min } from "class-validator";
-// import { Offer } from "src/offers/entities/offer.entity";
+import { Offer } from "src/offers/entities/offer.entity";
 import { User } from "src/users/entities/user.entity";
 import { Wishlist } from "src/wishlists/entities/wishlist.entity";
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Column, JoinColumn, OneToMany, ManyToMany } from "typeorm";
@@ -46,9 +46,9 @@ export class Wish {
     })
     raised: number;
 
-    // @ManyToOne(() => User, (user) => user.wishes)
-    // @JoinColumn()
-    // owner: User;
+    @ManyToOne(() => User, (user) => user.wishes)
+    @JoinColumn()
+    owner: User;
 
     @Length(1, 1024)
     @Column({
@@ -57,8 +57,8 @@ export class Wish {
     })
     description: string;
 
-    // @OneToMany(() => Offer, (offer) => offer.item)
-    // offers: Offer[];
+    @OneToMany(() => Offer, (offer) => offer.item)
+    offers: Offer[];
 
     @Min(0)
     @Column({

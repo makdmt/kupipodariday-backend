@@ -31,9 +31,9 @@ export class Wishlist {
     @Column('varchar')
     image: string;
 
-    // @ManyToOne(() => User, (user) => user.wishlists)
-    // @JoinColumn()
-    // owner: User;
+    @ManyToOne(() => User, (user) => user.wishlists)
+    @JoinColumn()
+    owner: User;
 
     @ManyToMany(() => Wish, (wish) => wish.wishlists)
     @JoinTable()

@@ -3,13 +3,13 @@ import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Offerf } from './entities/offer.entity';
+import { Offer } from './entities/offer.entity';
 
 @Injectable()
 export class OffersService {
   constructor(
-    @InjectRepository(Offerf)
-    private offerRepository: Repository<Offerf>
+    @InjectRepository(Offer)
+    private offerRepository: Repository<Offer>
   ) {}
 
   create(createOfferDto: CreateOfferDto) {
