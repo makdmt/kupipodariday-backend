@@ -13,7 +13,6 @@ export class AuthService {
 
     auth(user: User) {
         return { access_token: this.jwtService.sign({ sub: user.id }) }
-        // return { access_token: this.jwtService.signAsync({ sub: user.id, username: user.username }) }
     }
 
     async validatePassword(username: string, password: string) {

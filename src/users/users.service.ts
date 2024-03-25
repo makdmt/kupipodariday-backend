@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { hashValue } from 'src/shared/hash';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+
+const USER_EXIST_ERR_MSG = 'user already exist'
 
 
 @Injectable()
@@ -19,8 +21,18 @@ export class UsersService {
     private cache: Cache
   ) { }
 
+
   async create(createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepository.save({ ...createUserDto, password: await hashValue(createUserDto.password) });
+    let user: User = null;
+    try {
+      user = await this.userRepository.save({ ...createUserDto, password: await hashValue(createUserDto.password) });
+
+    } catch (err) {
+      if ('code' in err) {
+        if (err.code === '23505') throw new ConflictException(USER_EXIST_ERR_MSG)
+      }
+    }
+    return user;
   }
 
   findAll(): Promise<User[]> {

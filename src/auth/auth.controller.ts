@@ -3,14 +3,14 @@ import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { LocalGuard } from './passport-strategies/local-guard';
 import { Request } from 'express';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { SignUpDto } from './dto/signup.dto';
 
 @Controller()
 export class AuthController {
     constructor(
         private userService: UsersService,
         private authService: AuthService
-    ) {}
+    ) { }
 
     @UseGuards(LocalGuard)
     @Post('signin')
@@ -19,7 +19,8 @@ export class AuthController {
     }
 
     @Post('signup')
-    async signup(@Body() createUserDto: CreateUserDto) {
+    async signup(@Body() createUserDto: SignUpDto) {
+        console.log(createUserDto);
         const user = await this.userService.create(createUserDto);
         return this.authService.auth(user);
     }

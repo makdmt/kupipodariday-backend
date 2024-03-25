@@ -1,6 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, Generated } from "typeorm"
-import { IsEmail } from "class-validator";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
+import { IsEmail, IsNotEmpty, IsOptional, IsUrl, Length } from "class-validator";
 import { Wish } from "src/wishes/entities/wish.entity";
+// import { Offer } from "src/offers/entities/offer.entity";
+import { Wishlist } from "src/wishlists/entities/wishlist.entity";
 
 @Entity()
 export class User {
@@ -13,6 +15,7 @@ export class User {
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @Length(2, 30)
     @Column({
         type: 'varchar',
         length: 30,
@@ -20,26 +23,42 @@ export class User {
     })
     username: string;
 
+    @IsOptional()
+    @Length(2, 200)
     @Column({
         type: 'varchar',
         length: 200,
         default: 'Пока ничего не рассказал о себе',
+        nullable: true
     })
     about: string;
 
- 
+    @IsOptional()
+    @IsUrl()
     @Column({
+        type: 'varchar',
+        default: 'https://i.pravatar.cc/300',
         nullable: true
     })
+
     @IsEmail()
+    @Column({
+        type: 'varchar',
+        unique: true,
+    })
     email: string;
 
-    @Column({
-        nullable: true
-    })
+    @IsNotEmpty()
+    @Column()
     password: string;
 
-    @OneToMany(() => Wish, (wish) => wish.owner)
-    wishes: Wish[];
-    
+    // @OneToMany(() => Wish, (wish) => wish.owner)
+    // wishes: Wish[];
+
+    // @OneToMany(() => Offer, (offer) => offer.user)
+    // offers: Offer[];
+
+    // @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+    // wishlists: Wishlist;
+
 }
