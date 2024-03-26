@@ -40,6 +40,7 @@ export class User {
         default: 'https://i.pravatar.cc/300',
         nullable: true
     })
+    avatar: string;
 
     @IsEmail()
     @Column({

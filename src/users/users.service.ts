@@ -1,31 +1,30 @@
 import { Injectable, Inject, ConflictException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { PatchUserDto } from './dto/patch-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { hashValue } from 'src/shared/hash';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { SignUpDto } from 'src/auth/dto/signup.dto';
 
 const USER_EXIST_ERR_MSG = 'user already exist'
-
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
 
-    private userRepository: Repository<User>,
+    private usersRepository: Repository<User>,
     @Inject(CACHE_MANAGER)
     private cache: Cache
   ) { }
 
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: SignUpDto): Promise<User> {
     let user: User = null;
     try {
-      user = await this.userRepository.save({ ...createUserDto, password: await hashValue(createUserDto.password) });
+      user = await this.usersRepository.save({ ...createUserDto, password: await hashValue(createUserDto.password) });
 
     } catch (err) {
       if ('code' in err) {
@@ -35,34 +34,34 @@ export class UsersService {
     return user;
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
-  async findById(id: string) {
+  async findById(id: User['id']) {
     const cachedUser = await this.getFromCache(id);
     if (cachedUser) return cachedUser;
 
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.usersRepository.findOne({ where: { id } });
     await this.addToCache(user);
 
     return user;
   }
 
-  findOne(userParams: Partial<User>) {
-    return this.userRepository.findOne({ where: userParams });
+  findOne(userParams: FindOneOptions<User>) {
+    return this.usersRepository.findOne(userParams);
+  }
+
+  updateOne(id: string, patchUserDto: PatchUserDto) {
+    return this.usersRepository.save({ ...patchUserDto, id });
   }
 
   findByUsername(username: string) {
-    return this.userRepository.findOne({ where: { username } })
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this.usersRepository.findOne({ where: { username } })
   }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  findAll(): Promise<User[]> {
+    return this.usersRepository.find();
   }
 
   private getCacheKey(id: string) {

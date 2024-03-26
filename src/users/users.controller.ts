@@ -1,23 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { PatchUserDto } from './dto/patch-user.dto';
 import { JwtGuard } from '../auth/passport-strategies/jwt-guard';
+import { AuthUserId } from 'src/shared/custom.decorators';
+import { User } from './entities/user.entity';
+import { RemoveUserEmailAndPasswordInterceptor } from './users.interceptors';
 
+@UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @UseInterceptors(RemoveUserEmailAndPasswordInterceptor)
+  @Get('me')
+  findMe(@AuthUserId() id: User['id']) {
+    return this.usersService.findById(id);
   }
 
-  @UseGuards(JwtGuard)
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Patch('me')
+  async patchMe(@AuthUserId() id: User['id'], @Body() patchUserDto: PatchUserDto) {
+    await this.usersService.updateOne(id, patchUserDto);
+    // return this.usersService.findOne()
   }
+
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -25,8 +31,8 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  update(@Param('id') id: string, @Body() updateUserDto: PatchUserDto) {
+    // return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
