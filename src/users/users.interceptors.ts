@@ -4,12 +4,25 @@ import { User } from "./entities/user.entity";
 
 
 @Injectable()
-export class RemoveUserEmailAndPasswordInterceptor implements NestInterceptor {
+export class RemoveUserPasswordInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<User>): Observable<Omit<User, 'password' | 'email'>> {
         return next.handle()
             .pipe(
                 map(userData => {
-                    const { password, email, ...res } = userData; // eslint-disable-line
+                    const { password, ...res } = userData; // eslint-disable-line
+                    return res;
+                })
+            )
+    }
+}
+
+@Injectable()
+export class RemoveUserEmailInterceptor implements NestInterceptor {
+    intercept(context: ExecutionContext, next: CallHandler<User>): Observable<Omit<User, 'password' | 'email'>> {
+        return next.handle()
+            .pipe(
+                map(userData => {
+                    const { email, ...res } = userData; // eslint-disable-line
                     return res;
                 })
             )

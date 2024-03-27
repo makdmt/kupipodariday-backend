@@ -16,9 +16,8 @@ export class AuthService {
     }
 
     async validatePassword(username: string, password: string) {
-        const user = await this.userService.findByUsername(username);
-        if (!user || !isCorrectHash(user.password, password)) throw new UnauthorizedException('wrong username or password');
-        delete user.password;
+        const user = await this.userService.findOne({ where: { username } });
+        if (!user || await isCorrectHash(password, user?.password)) throw new UnauthorizedException('wrong username or password');
         return user;
     }
 }

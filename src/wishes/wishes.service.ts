@@ -4,22 +4,22 @@ import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wish } from './entities/wish.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 
 export class WishesService {
   constructor(
-    @InjectRepository(Wish) 
+    @InjectRepository(Wish)
     private wishRepository: Repository<Wish>
-  ) {}
+  ) { }
 
-  create(createWishDto: CreateWishDto) {
+  create(createWishDto: CreateWishDto & { owner: User }) {
     return this.wishRepository.save(createWishDto);
-    return 'This action adds a new wish';
   }
 
   findAll() {
-    return `This action returns all wishes`;
+    return this.wishRepository.find();
   }
 
   findOne(id: number) {

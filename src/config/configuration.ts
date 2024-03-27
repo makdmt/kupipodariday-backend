@@ -12,6 +12,6 @@ export default () => ({
     },
     jwt: {
         secret: process.env.JWT_SECRET || 'secret-key',
-        ttl: process.env.JWT_TTL || '600s',
+        ttl: process.env.JWT_TTL || '6000s',
     }
 })
