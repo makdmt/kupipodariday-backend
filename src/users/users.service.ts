@@ -46,13 +46,6 @@ export class UsersService {
 
   async findOne(userParams: FindOneOptions<User>) {
     return this.usersRepository.findOne(userParams);
-    let user: User = null;
-    try {
-      user = await this.usersRepository.findOneOrFail(userParams);
-    } catch (err) {
-      if (err instanceof EntityNotFoundError) throw new NotFoundException();
-    }
-    return user;
   }
 
   async updateOne(userId: User['id'], patchUserDto: PatchUserDto) {

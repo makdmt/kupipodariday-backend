@@ -97,10 +97,6 @@ export class WishesService {
     return wish.owner.id === userId
   }
 
-  calcDonateLimit(wish: Wish): number {
-    return parseFloat((wish.price - wish.raised).toFixed(2))
-  }
-
   private hasOffers(wish: Wish): boolean {
     if (wish.offers.length > 0) return true;
     return false;
