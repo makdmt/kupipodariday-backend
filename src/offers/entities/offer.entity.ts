@@ -1,4 +1,4 @@
-import { IsBoolean, Min } from "class-validator";
+import { IsBoolean, IsOptional, Min } from "class-validator";
 import { User } from "src/users/entities/user.entity";
 import { Wish } from "src/wishes/entities/wish.entity";
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Column, JoinColumn, OneToMany, ManyToMany } from "typeorm";
@@ -22,7 +22,7 @@ export class Offer {
     @JoinColumn()
     item: Wish;
 
-    @Min(0)
+    @Min(0.01)
     @Column({
         type: 'decimal',
         precision: 9,
@@ -30,6 +30,7 @@ export class Offer {
     })
     amount: number;
 
+    @IsOptional()
     @IsBoolean()
     @Column('boolean', { default: false })
     hidden: boolean;

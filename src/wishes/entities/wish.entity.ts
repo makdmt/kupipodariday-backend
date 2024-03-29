@@ -1,5 +1,7 @@
+import { Transform } from "class-transformer";
 import { IsUrl, Length, Min } from "class-validator";
 import { Offer } from "src/offers/entities/offer.entity";
+import { decimalEntityColumnTransformer, floatRounderTransformer } from "src/shared/entity.transformers";
 import { User } from "src/users/entities/user.entity";
 import { Wishlist } from "src/wishlists/entities/wishlist.entity";
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Column, JoinColumn, OneToMany, ManyToMany } from "typeorm";
@@ -31,19 +33,23 @@ export class Wish {
     image: string;
 
     @Min(0)
-    @Column({
-        type: 'decimal',
-        precision: 9,
-        scale: 2
-    })
-    price: number;
-
-    @Min(0)
+    @Transform(floatRounderTransformer)
     @Column({
         type: 'decimal',
         precision: 9,
         scale: 2,
-        default: 0
+        transformer: decimalEntityColumnTransformer
+    })
+    price: number;
+
+    @Min(0)
+    @Transform(floatRounderTransformer)
+    @Column({
+        type: 'decimal',
+        precision: 9,
+        scale: 2,
+        default: 0,
+        transformer: decimalEntityColumnTransformer
     })
     raised: number;
 

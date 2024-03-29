@@ -4,9 +4,9 @@ import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wish } from './entities/wish.entity';
-import { UserId } from 'src/shared/shared.types';
+import { UserId, WishId } from 'src/shared/shared.types';
 
-type WishId = Wish['id'];
+
 type Owner = Pick<Wish, 'owner'>;
 
 @Injectable()
@@ -37,6 +37,11 @@ export class WishesService {
     return await this.wishesRepository.save(updateWishDto);
   }
 
+  async donate(wish: Wish, amount: number) {
+    wish.raised += amount;
+    return this.wishesRepository.save(wish);
+  }
+
   async removeOne(wishId: WishId, userId: UserId) {
     const wish = await this.wishesRepository.findOne({
       where: { id: wishId },
@@ -55,7 +60,10 @@ export class WishesService {
     const wish = await this.wishesRepository.findOne(
       {
         where: { id },
-        relations: { offers: true }
+        relations: {
+          offers: true,
+          owner: true
+        }
       })
     if (!wish) throw new NotFoundException();
     return wish;
@@ -70,7 +78,7 @@ export class WishesService {
 
   findPopular() {
     return this.wishesRepository.createQueryBuilder()
-      .select('wish')
+      .select('*')
       .from(Wish, 'wish')
       .distinctOn(['wish.name'])
       .orderBy({
@@ -85,9 +93,12 @@ export class WishesService {
     return this.wishesRepository.find();
   }
 
-  private isOwner(wish: Wish, userId: UserId): boolean {
-    if (wish.owner.id === userId) return true;
-    return false;
+  isOwner(wish: Wish, userId: UserId): boolean {
+    return wish.owner.id === userId
+  }
+
+  calcDonateLimit(wish: Wish): number {
+    return parseFloat((wish.price - wish.raised).toFixed(2))
   }
 
   private hasOffers(wish: Wish): boolean {

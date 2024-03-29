@@ -4,6 +4,7 @@ import { Wish } from "src/wishes/entities/wish.entity";
 import { Offer } from "src/offers/entities/offer.entity";
 import { Wishlist } from "src/wishlists/entities/wishlist.entity";
 import { Transform } from "class-transformer";
+import { toLowerCaseTransformer } from "src/shared/entity.transformers";
 
 @Entity()
 export class User {
@@ -17,7 +18,7 @@ export class User {
     updatedAt: Date;
 
     @Length(2, 30)
-    @Transform(({ value }) => String(value).toLowerCase())
+    @Transform(toLowerCaseTransformer)
     @Column({
         type: 'varchar',
         length: 30,
@@ -45,7 +46,7 @@ export class User {
     avatar: string;
 
     @IsEmail()
-    @Transform(({ value }) => String(value).toLowerCase())
+    @Transform(toLowerCaseTransformer)
     @Column({
         type: 'varchar',
         unique: true,

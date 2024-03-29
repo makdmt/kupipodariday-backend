@@ -7,6 +7,7 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtGuard } from 'src/auth/passport-strategies/jwt-guard';
 import { UserId } from 'src/shared/shared.types';
 
+@UseGuards(JwtGuard)
 @Controller('wishes')
 export class WishesController {
   constructor(private readonly wishesService: WishesService) { }
@@ -21,7 +22,7 @@ export class WishesController {
     return this.wishesService.findPopular();
   }
   
-  @UseGuards(JwtGuard)
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.wishesService.findOneById(+id);
