@@ -94,7 +94,7 @@ export class WishesService {
   }
 
   isOwner(wish: Wish, userId: UserId): boolean {
-    return wish.owner.id === userId
+    return !!wish.owner?.id && wish.owner.id === userId
   }
 
   private hasOffers(wish: Wish): boolean {
