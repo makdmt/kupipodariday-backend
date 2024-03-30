@@ -21,7 +21,7 @@ export class WishesController {
   getTop() {
     return this.wishesService.findPopular();
   }
-  
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -41,11 +41,6 @@ export class WishesController {
   @Post()
   create(@AuthUserId() user: User, @Body() createWishDto: CreateWishDto) {
     return this.wishesService.create({ ...createWishDto, owner: user });
-  }
-
-  @Get()
-  findAll() {
-    return this.wishesService.findAll();
   }
 
 }

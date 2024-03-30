@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { Wish } from './entities/wish.entity';
 import { UserId, WishId } from 'src/shared/shared.types';
 
@@ -89,8 +89,8 @@ export class WishesService {
       .execute()
   }
 
-  findAll() {
-    return this.wishesRepository.find();
+  findMany(params: FindManyOptions) {
+    return this.wishesRepository.find(params);
   }
 
   isOwner(wish: Wish, userId: UserId): boolean {

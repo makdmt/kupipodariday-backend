@@ -23,7 +23,7 @@ export class Wishlist {
 
     @IsOptional()
     @Column('varchar',
-        { length: 1500 })
+        { length: 1500, nullable: true })
     description: string;
 
     @IsOptional()
