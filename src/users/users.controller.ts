@@ -6,11 +6,24 @@ import { AuthUserId } from 'src/shared/custom.decorators';
 import { User } from './entities/user.entity';
 import { RemoveUserPasswordInterceptor, RemoveUserEmailInterceptor } from './users.interceptors';
 import { FindUsersDto } from './dto/find-users.dto';
+import { UserId } from 'src/shared/shared.types';
 
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(
+    private readonly usersService: UsersService,
+  ) { }
+
+  @Get('me/wishes')
+  getMyWishes(@AuthUserId() userId: UserId) {
+    return this.usersService.userWishes("user.id = :userId", { userId });
+  }
+
+  @Get(':username/wishes')
+  getUserWishes(@Param('username') username: string) {
+    return this.usersService.userWishes("user.username = :username", { username });
+  }
 
   @UseInterceptors(
     RemoveUserPasswordInterceptor,

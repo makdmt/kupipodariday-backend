@@ -19,7 +19,11 @@ export class OffersService {
   ) { }
 
   async create(user: User, createOfferDto: CreateOfferDto) {
-    const wish = await this.wishesService.findOneById(createOfferDto.itemId);
+    const wish = await this.wishesService.findOne(
+      {
+        where: { id: createOfferDto.itemId },
+        relations: { user: true }
+      });
     if (!wish) throw new NotFoundException();
     if (this.wishesService.isOwner(wish, user.id)) throw new ForbiddenException('donate to own wish is prohibited');
 

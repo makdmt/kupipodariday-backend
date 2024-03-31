@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Wish } from './entities/wish.entity';
 import { UserId, WishId } from 'src/shared/shared.types';
 
@@ -56,19 +56,6 @@ export class WishesService {
     return this.wishesRepository.remove(wish);
   }
 
-  async findOneById(id: WishId) {
-    const wish = await this.wishesRepository.findOne(
-      {
-        where: { id },
-        relations: {
-          offers: true,
-          owner: true
-        }
-      })
-    if (!wish) throw new NotFoundException();
-    return wish;
-  }
-
   findLast() {
     return this.wishesRepository.find({
       take: 40,
@@ -87,6 +74,10 @@ export class WishesService {
       })
       .take(20)
       .execute()
+  }
+
+  findOne(params: FindOneOptions) {
+    return this.wishesRepository.findOne(params);
   }
 
   findMany(params: FindManyOptions) {

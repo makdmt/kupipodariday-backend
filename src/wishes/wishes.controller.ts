@@ -25,7 +25,7 @@ export class WishesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.wishesService.findOneById(+id);
+    // return this.wishesService.findOneById(+id);
   }
 
   @Patch(':id')

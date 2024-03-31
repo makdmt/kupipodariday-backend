@@ -2,7 +2,7 @@ import { Injectable, Inject, ConflictException, NotFoundException } from '@nestj
 import { PatchUserDto } from './dto/patch-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { EntityNotFoundError, FindOneOptions, Like, Repository } from 'typeorm';
+import { FindOneOptions, Like, ObjectLiteral, Repository } from 'typeorm';
 import { hashValue } from 'src/shared/hash';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -14,8 +14,8 @@ const USER_EXIST_ERR_MSG = 'user with such username or email is already exist'
 export class UsersService {
   constructor(
     @InjectRepository(User)
-
     private usersRepository: Repository<User>,
+
     @Inject(CACHE_MANAGER)
     private cache: Cache
   ) { }
@@ -74,6 +74,20 @@ export class UsersService {
 
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
+  }
+
+  async userWishes(searchCondition: string, userParams: ObjectLiteral) {
+
+    const populatedUser = await this.usersRepository.createQueryBuilder('user')
+      .select('user.username')
+      .leftJoinAndSelect('user.wishes', 'wishes')
+      .leftJoinAndSelect('wishes.offers', 'offers', 'offers.hidden = :isHidden', { isHidden: false })
+      .where(searchCondition, userParams)
+      .getOne()
+
+    if (!populatedUser) throw new NotFoundException()
+
+    return populatedUser.wishes;
   }
 
   private getCacheKey(id: string) {
