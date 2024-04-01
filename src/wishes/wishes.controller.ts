@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
@@ -6,8 +6,10 @@ import { AuthUser, AuthUserId } from 'src/shared/custom.decorators';
 import { User } from 'src/users/entities/user.entity';
 import { JwtGuard } from 'src/auth/passport-strategies/jwt-guard';
 import { UserId, WishId } from 'src/shared/shared.types';
+import { RemoveHiddenOffersInterceptor } from './wishes.interceptors';
 
 @UseGuards(JwtGuard)
+@UseInterceptors(RemoveHiddenOffersInterceptor)
 @Controller('wishes')
 export class WishesController {
   constructor(private readonly wishesService: WishesService) { }

@@ -22,7 +22,7 @@ export class OffersService {
     const wish = await this.wishesService.findOne(
       {
         where: { id: createOfferDto.itemId },
-        relations: { user: true }
+        relations: { owner: true }
       });
     if (!wish) throw new NotFoundException();
     if (this.wishesService.isOwner(wish, user.id)) throw new ForbiddenException('donate to own wish is prohibited');
@@ -51,7 +51,10 @@ export class OffersService {
   }
 
   findAll() {
-    return this.offerRepository.find();
+    return this.offerRepository.find({
+      relations: { user: true },
+      where: { hidden: false }
+    });
   }
 
   findOne(params: FindOneOptions) {
