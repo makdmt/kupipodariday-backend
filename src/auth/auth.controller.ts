@@ -20,7 +20,6 @@ export class AuthController {
 
     @Post('signup')
     async signup(@Body() createUserDto: SignUpDto) {
-        console.log(createUserDto);
         const user = await this.userService.create(createUserDto);
         return this.authService.auth(user);
     }

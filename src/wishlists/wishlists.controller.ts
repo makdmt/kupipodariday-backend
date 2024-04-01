@@ -7,7 +7,7 @@ import { AuthUser } from 'src/shared/custom.decorators';
 import { User } from 'src/users/entities/user.entity';
 
 @UseGuards(JwtGuard)
-@Controller('wishlists')
+@Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) { }
 
