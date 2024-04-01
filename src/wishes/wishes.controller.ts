@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, NotFoundException } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
-import { AuthUserId } from 'src/shared/custom.decorators';
+import { AuthUser, AuthUserId } from 'src/shared/custom.decorators';
 import { User } from 'src/users/entities/user.entity';
 import { JwtGuard } from 'src/auth/passport-strategies/jwt-guard';
-import { UserId } from 'src/shared/shared.types';
+import { UserId, WishId } from 'src/shared/shared.types';
 
 @UseGuards(JwtGuard)
 @Controller('wishes')
@@ -22,10 +22,24 @@ export class WishesController {
     return this.wishesService.findPopular();
   }
 
+  @Post(':id/copy')
+  copy(@AuthUser() user: User, @Param('id') wishId: WishId) {
+    return this.wishesService.duplicateOne(wishId, user);
+  }
+
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    // return this.wishesService.findOneById(+id);
+  async findOne(@Param('id') id: string) {
+    const wish = await this.wishesService.findOne({
+      relations: {
+        owner: true,
+        offers: true
+      },
+      where: { id }
+    });
+
+    if (!wish) throw new NotFoundException();
+    return wish;
   }
 
   @Patch(':id')
@@ -40,7 +54,7 @@ export class WishesController {
 
   @Post()
   create(@AuthUserId() user: User, @Body() createWishDto: CreateWishDto) {
-    return this.wishesService.create({ ...createWishDto, owner: user });
+    return this.wishesService.create(createWishDto, user);
   }
 
 }

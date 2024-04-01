@@ -5,9 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { Wish } from './entities/wish.entity';
 import { UserId, WishId } from 'src/shared/shared.types';
-
-
-type Owner = Pick<Wish, 'owner'>;
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class WishesService {
@@ -16,7 +14,8 @@ export class WishesService {
     private wishesRepository: Repository<Wish>
   ) { }
 
-  create(createWishDto: CreateWishDto & Owner) {
+  create(createWishDto: CreateWishDto, user: User) {
+    createWishDto['owner'] = user;
     return this.wishesRepository.save(createWishDto);
   }
 
@@ -42,6 +41,33 @@ export class WishesService {
     return this.wishesRepository.save(wish);
   }
 
+  async duplicateOne(wishId: WishId, user: User) {
+    const wish = await this.wishesRepository.findOne(
+      {
+        select: {
+          id: true,
+          name: true,
+          link: true,
+          image: true,
+          price: true,
+          description: true,
+          copied: true,
+        },
+        relations: { owner: true },
+        where: { id: wishId },
+      })
+
+    if (!wish) throw new NotFoundException();
+
+    wish.copied++;
+    await this.wishesRepository.save(wish); //update source wish
+
+    delete wish.id;
+    delete wish.copied;
+    wish['owner'] = user;
+    return this.wishesRepository.save(wish); //create wish copy for user
+  }
+
   async removeOne(wishId: WishId, userId: UserId) {
     const wish = await this.wishesRepository.findOne({
       where: { id: wishId },
@@ -58,6 +84,7 @@ export class WishesService {
 
   findLast() {
     return this.wishesRepository.find({
+      relations: { owner: true },
       take: 40,
       order: { createdAt: 'DESC' }
     })
