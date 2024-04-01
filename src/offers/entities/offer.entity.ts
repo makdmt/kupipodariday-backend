@@ -1,7 +1,7 @@
 import { IsBoolean, IsOptional, Min } from "class-validator";
 import { User } from "src/users/entities/user.entity";
 import { Wish } from "src/wishes/entities/wish.entity";
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Column, JoinColumn, OneToMany, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Column, JoinColumn } from "typeorm";
 
 @Entity()
 export class Offer {

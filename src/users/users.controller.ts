@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, UseInterceptors, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { PatchUserDto } from './dto/patch-user.dto';
 import { JwtGuard } from '../auth/passport-strategies/jwt-guard';

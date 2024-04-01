@@ -8,7 +8,7 @@ import { JwtGuard } from 'src/auth/passport-strategies/jwt-guard';
 import { UserId, WishId } from 'src/shared/shared.types';
 import { RemoveHiddenOffersInterceptor } from './wishes.interceptors';
 
-@UseGuards(JwtGuard)
+
 @UseInterceptors(RemoveHiddenOffersInterceptor)
 @Controller('wishes')
 export class WishesController {
@@ -24,12 +24,13 @@ export class WishesController {
     return this.wishesService.findPopular();
   }
 
+  @UseGuards(JwtGuard)
   @Post(':id/copy')
   copy(@AuthUser() user: User, @Param('id') wishId: WishId) {
     return this.wishesService.duplicateOne(wishId, user);
   }
 
-
+  @UseGuards(JwtGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const wish = await this.wishesService.findOne({
@@ -44,19 +45,21 @@ export class WishesController {
     return wish;
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
   update(@Param('id') id: string, @AuthUserId() userId: UserId, @Body() updateWishDto: UpdateWishDto) {
     return this.wishesService.updateOne(+id, userId, updateWishDto);
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':id')
   remove(@Param('id') id: string, @AuthUserId() userId: UserId) {
     return this.wishesService.removeOne(+id, userId);
   }
 
+  @UseGuards(JwtGuard)
   @Post()
   create(@AuthUserId() user: User, @Body() createWishDto: CreateWishDto) {
     return this.wishesService.create(createWishDto, user);
   }
-
 }
