@@ -3,12 +3,12 @@ import { UsersService } from './users.service';
 import { PatchUserDto } from './dto/patch-user.dto';
 import { JwtGuard } from '../auth/passport-strategies/jwt-guard';
 import { AuthUserId } from 'src/shared/custom.decorators';
-import { User } from './entities/user.entity';
-import { RemoveUserPasswordInterceptor, RemoveUserEmailInterceptor } from './users.interceptors';
+import { RemoveUserPasswordInterceptor } from './users.interceptors';
 import { FindUsersDto } from './dto/find-users.dto';
 import { UserId } from 'src/shared/shared.types';
 
 @UseGuards(JwtGuard)
+@UseInterceptors(RemoveUserPasswordInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -25,26 +25,16 @@ export class UsersController {
     return this.usersService.userWishes("user.username = :username", { username });
   }
 
-  @UseInterceptors(
-    RemoveUserPasswordInterceptor,
-    RemoveUserEmailInterceptor)
   @Get('me')
-  findMe(@AuthUserId() id: User['id']) {
+  findMe(@AuthUserId() id: UserId) {
     return this.usersService.findById(id);
   }
 
-  @UseInterceptors(
-    RemoveUserPasswordInterceptor
-  )
   @Patch('me')
-  async patchMe(@AuthUserId() id: User['id'], @Body() patchUserDto: PatchUserDto) {
-    await this.usersService.updateOne(id, patchUserDto);
-    return this.usersService.findById(id);
+  async patchMe(@AuthUserId() id: UserId, @Body() patchUserDto: PatchUserDto) {
+    return this.usersService.updateOne(id, patchUserDto);
   }
 
-  @UseInterceptors(
-    RemoveUserPasswordInterceptor,
-    RemoveUserEmailInterceptor)
   @Get(':username')
   async findOne(@Param('username') username: string) {
     const user = await this.usersService.findOne({ where: { username } });
@@ -55,15 +45,5 @@ export class UsersController {
   @Post('find')
   findMany(@Body() { query }: FindUsersDto) {
     return this.usersService.findByEmailOrUsername(query);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: PatchUserDto) {
-    // return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
   }
 }

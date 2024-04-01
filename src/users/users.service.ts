@@ -7,6 +7,7 @@ import { hashValue } from 'src/shared/hash';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { SignUpDto } from 'src/auth/dto/signup.dto';
+import { UserId } from 'src/shared/shared.types';
 
 const USER_EXIST_ERR_MSG = 'user with such username or email is already exist'
 
@@ -34,7 +35,7 @@ export class UsersService {
     return user;
   }
 
-  async findById(id: User['id']) {
+  async findById(id: UserId) {
     const cachedUser = await this.getFromCache(id);
     if (cachedUser) return cachedUser;
 
@@ -48,7 +49,7 @@ export class UsersService {
     return this.usersRepository.findOne(userParams);
   }
 
-  async updateOne(userId: User['id'], patchUserDto: PatchUserDto) {
+  async updateOne(userId: UserId, patchUserDto: PatchUserDto) {
     if ('password' in patchUserDto) patchUserDto.password = await hashValue(patchUserDto.password);
     const user = await this.usersRepository.save({ ...patchUserDto, id: userId });
     await this.removeFromCache(userId);
@@ -68,13 +69,6 @@ export class UsersService {
     })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find();
-  }
 
   async userWishes(searchCondition: string, userParams: ObjectLiteral) {
 

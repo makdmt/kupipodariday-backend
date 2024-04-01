@@ -9,21 +9,11 @@ export class RemoveUserPasswordInterceptor implements NestInterceptor {
         return next.handle()
             .pipe(
                 map(userData => {
-                    const { password, ...res } = userData; // eslint-disable-line
-                    return res;
-                })
-            )
-    }
-}
-
-@Injectable()
-export class RemoveUserEmailInterceptor implements NestInterceptor {
-    intercept(context: ExecutionContext, next: CallHandler<User>): Observable<Omit<User, 'password' | 'email'>> {
-        return next.handle()
-            .pipe(
-                map(userData => {
-                    const { email, ...res } = userData; // eslint-disable-line
-                    return res;
+                    if ('password' in userData) {
+                        const { password, ...res } = userData; // eslint-disable-line
+                        return res;
+                    }
+                    return userData;
                 })
             )
     }

@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    CacheModule.register({ttl: 300000})
+    CacheModule.register({ ttl: 300000 })
   ],
   controllers: [UsersController],
   providers: [UsersService],
