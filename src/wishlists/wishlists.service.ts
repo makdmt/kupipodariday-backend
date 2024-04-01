@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 import { Wishlist } from './entities/wishlist.entity';
 import { WishesService } from 'src/wishes/wishes.service';
 import { User } from 'src/users/entities/user.entity';
@@ -26,6 +26,7 @@ export class WishlistsService {
     if (!wishlist) throw new NotFoundException();
     if (!this.isOwner(wishlist, user.id)) throw new ForbiddenException();
     await this.convertWishesIdToWishesInDto(updateWishlistDto);
+    updateWishlistDto['id'] = wishlist.id;
     return this.wishlistsRepositoy.save(updateWishlistDto);
   }
 
@@ -36,13 +37,13 @@ export class WishlistsService {
     return this.wishlistsRepositoy.remove(wishlist);
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} wishlist`;
-  // }
+  findOne(params: FindOneOptions) {
+    return this.wishlistsRepositoy.findOne(params);
+  }
 
-  // findAll() {
-  //   return `This action returns all wishlists`;
-  // }
+  findMany(params: FindManyOptions) {
+    return this.wishlistsRepositoy.find(params);
+  }
 
   private async convertWishesIdToWishesInDto(wishesDto: CreateWishlistDto | UpdateWishlistDto) {
     if ('itemsId' in wishesDto && wishesDto.itemsId.length > 0) {
