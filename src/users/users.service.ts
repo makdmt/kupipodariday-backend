@@ -51,7 +51,13 @@ export class UsersService {
 
   async updateOne(userId: UserId, patchUserDto: PatchUserDto) {
     if ('password' in patchUserDto) patchUserDto.password = await hashValue(patchUserDto.password);
-    const user = await this.usersRepository.save({ ...patchUserDto, id: userId });
+    const user = await this.usersRepository
+      .save({ ...patchUserDto, id: userId })
+      .catch(err => {
+        if ('code' in err) {
+          if (err.code === '23505') throw new ConflictException(USER_EXIST_ERR_MSG)
+        }
+      })
     await this.removeFromCache(userId);
     return user;
   }
