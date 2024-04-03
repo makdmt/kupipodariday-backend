@@ -1,4 +1,4 @@
-import { PickType } from "@nestjs/mapped-types";
+import { PickType } from "@nestjs/swagger";
 import { Wishlist } from "../entities/wishlist.entity";
 import { WishId } from "src/shared/shared.types";
 import { ArrayMaxSize, IsArray, IsNumber } from "class-validator";

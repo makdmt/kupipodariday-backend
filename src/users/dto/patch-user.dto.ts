@@ -1,4 +1,4 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/swagger'
 import { User } from '../entities/user.entity';
 
 export class PatchUserDto extends PartialType(
