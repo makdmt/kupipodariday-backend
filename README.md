@@ -12,8 +12,8 @@
 ## Как собрать и запустить код
 
 **Установите БД**
-Установите PostgreSQL https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-Параметры синхронизации заданы в /src/config/configuration.ts
+PostgreSQL https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+Параметры синхронизации заданы в /src/config/configuration.ts<br>
 При старте приложение автоматически адаптирует таблицы в базе под typeORM entities описанные в коде.
 
 ```sh
