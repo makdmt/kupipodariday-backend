@@ -12,7 +12,7 @@
 ## Как собрать и запустить код
 
 **Установите БД**
-PostgreSQL https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+PostgreSQL https://www.enterprisedb.com/downloads/postgres-postgresql-downloads<br>
 Параметры синхронизации заданы в /src/config/configuration.ts<br>
 При старте приложение автоматически адаптирует таблицы в базе под typeORM entities описанные в коде.
 
